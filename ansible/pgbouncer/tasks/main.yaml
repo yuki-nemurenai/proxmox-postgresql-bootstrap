@@ -1,0 +1,13 @@
+- name: Create the PgBouncer configuration file
+  ansible.builtin.template:
+    src: "templates/pgbouncer.ini.j2"
+    dest: "/etc/pgbouncer/pgbouncer.ini"
+  notify:
+    - Restart pgbouncer
+
+- name: Create PgBouncer userlist.txt file
+  ansible.builtin.template:
+    src: "templates/userlist.txt.j2"
+    dest: "/etc/pgbouncer/userlist.txt"
+  notify:
+    - Restart pgbouncer

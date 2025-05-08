@@ -1,0 +1,93 @@
+- name: Add pgdg repo to sources.list.d
+  ansible.builtin.lineinfile:
+    path: /etc/apt/sources.list.d/pgdg.list
+    line: "deb http://apt.postgresql.org/pub/repos/apt {{ ansible_distribution_release }}-pgdg main"
+    create: true
+  tags:
+    - postgresql-installation
+
+- name: Download PostgreSQL key and add it to system keyring
+  ansible.builtin.apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state: present
+  tags:
+    - postgresql-installation
+
+- name: Install PostgreSQL server {{ POSTGRESQL_VERSION }}
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  loop:
+    - "postgresql-{{ POSTGRESQL_VERSION }}"
+    - acl
+    - python3-psycopg2
+    - pgbouncer
+  tags:
+    - postgresql-installation
+
+- name: Check that PostgreSQL server is alive
+  community.postgresql.postgresql_ping:
+    db: postgres
+    login_unix_socket: /var/run/postgresql
+  register: postgresql
+  become: true
+  become_user: postgres
+  tags:
+    - postgresql-configuration
+
+- name: Print PostgreSQL server availability status and version
+  ansible.builtin.debug:
+    msg: 
+      - "PostgreSQL server availability status: {{ postgresql.is_available }}"
+      - "PostgreSQL server version: {{ postgresql.server_version }}"
+  when: postgresql.is_available == true
+  tags:
+    - postgresql-configuration
+
+- name: Create the allpication database
+  community.postgresql.postgresql_db:
+    state: present
+    name: "{{ DB_NAME }}"
+  become: true
+  become_user: postgres
+  when: postgresql.is_available == true
+  tags:
+    - postgresql-configuration
+
+- name: Create the application user
+  community.postgresql.postgresql_user:
+    state: present
+    name: "{{ DB_USER }}"
+    password: "{{ DB_PASSWORD }}"
+  become: true
+  become_user: postgres
+  when: postgresql.is_available == true
+  tags:
+    - postgresql-configuration
+
+- name: Grant the application user access to the application database
+  community.postgresql.postgresql_privs:
+    type: database
+    database: "{{ DB_NAME }}"
+    roles: "{{ DB_USER }}"
+    grant_option: no
+    privs: all
+  become: true
+  become_user: postgres
+  when: postgresql.is_available == true
+  tags:
+    - postgresql-configuration
+
+- name: The PostgreSQL server configuration parameters
+  community.postgresql.postgresql_set:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+  loop: "{{ POSTGRESQL_CONFIGURATION }}"
+  become: true
+  become_user: postgres
+  notify:
+    - Restart PostgreSQL
+  when: postgresql.is_available == true
+  tags:
+    - postgresql-configuration

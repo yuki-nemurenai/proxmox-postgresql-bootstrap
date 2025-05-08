@@ -1,0 +1,20 @@
+;;;
+;;; PgBouncer configuration file provided by Ansible
+;;;
+;; database name = connect string
+[databases]
+{{ DB_NAME }} = user=postgres
+;; User-specific configuration
+[users]
+;; Configuration section
+[pgbouncer]
+logfile = /var/log/postgresql/pgbouncer.log
+pidfile = /var/run/postgresql/pgbouncer.pid
+listen_addr = {{ PGBOUNCER_LISTEN_ADDR }}
+listen_port = 6432
+unix_socket_dir = /var/run/postgresql
+auth_type = md5
+auth_file = /etc/pgbouncer/userlist.txt
+pool_mode = transaction
+max_client_conn = 100
+default_pool_size = 20
