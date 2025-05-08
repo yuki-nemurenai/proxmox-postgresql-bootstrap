@@ -23,7 +23,7 @@ This project automates the deployment of PostgreSQL databases on virtual machine
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone git@github.com:yuki-nemurenai/proxmox-postgresql-bootstrap.git
    cd proxmox-postgresql-bootstrap
    ```
 
