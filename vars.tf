@@ -23,8 +23,8 @@ variable "cloud_image" {
         url = "https://cloud-images.ubuntu.com"
         architecture = "amd64"
         distro_codename = "noble"
-        target_datastore = "leta_10raid_nfs"
-        target_node = "odin"
+        target_datastore = "my_nfs_datastore"
+        target_node = "pve-01"
     }
 }
 
