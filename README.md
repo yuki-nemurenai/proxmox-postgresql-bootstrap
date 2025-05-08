@@ -9,7 +9,7 @@ This project automates the deployment of PostgreSQL databases on virtual machine
 - Automated provisioning of virtual machines in Proxmox using Terraform.
 - Configuration management using Ansible.
 - Secure key management for accessing virtual machines.
-- Customizable cloud configuration for virtual machines.
+- Customizable cloud configuration for virtual machines using Cloud-init.
 - Deploy the PostgreSQL Database with connection pooler PgBouncer.
 
 ## Prerequisites
