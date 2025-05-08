@@ -45,7 +45,7 @@ This project automates the deployment of PostgreSQL databases on virtual machine
 
 - Create and modify `secret.tfvars` to define and customize your Proxmox credentials, the virtual machine specifications and PostgreSQL parameters.
 - Update Ansible playbooks and templates in the `ansible/` directory to change the PostgreSQL configuration.
-- 
+- Run `terraform apply -var-file secret.tfvars`.
 
 ## secret.tfvars reference
 
